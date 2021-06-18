@@ -1,3 +1,8 @@
+
+
+
+
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -34,7 +39,15 @@
     $th_title=$_POST['title'];
     $th_desc=$_POST['desc'];
 
-    $sql= "INSERT INTO `threads` ( `title`, `description`, `user`, `cat_id`, `timestamp`) VALUES ( '$th_title', '$th_desc', '0', '$id', current_timestamp())";
+    $th_title = str_replace("<", "&lt;", $th_title);
+    $th_title = str_replace(">", "&gt;", $th_title);
+
+    $th_desc = str_replace("<", "&lt;", $th_desc);
+    $th_desc = str_replace(">", "&gt;", $th_desc);
+
+    $sno=$_POST['id'];
+
+    $sql= "INSERT INTO `threads` ( `title`, `description`, `user`, `cat_id`, `timestamp`) VALUES ( '$th_title', '$th_desc', '$sno', '$id', current_timestamp())";
     $result=mysqli_query($con,$sql);
     $showAlert=true;
     if($showAlert)
@@ -51,6 +64,7 @@
    <?php
 
     $id=$_GET['catagory'];
+
     
     $con=mysqli_connect("localhost","root","","myforum");
     $sql= "SELECT * FROM `categories` WHERE id = '$id' ";
@@ -87,36 +101,57 @@
             <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
           </p>
       </div>
-     
+      
    </div>
-
-<div class="container">
+   
+  
+   <?php 
+     $loggedin = " ";
+    if(!empty($_SESSION['loggedin']) && $_SESSION['loggedin']== true ){
+     
+     echo ' <div class="container">
       
       <h1 class="py-2" id="ques">Ask a Question</h1>
 
-<form action="<?php echo $_SERVER['REQUEST_URI']?>" method="post">
-  <div class="form-group">
-    <label for="exampleInputEmail1">Title</label>
-    <input type="text" required="1" class="form-control" id="title" name="title" aria-describedby="emailHelp">
-    <small id="emailHelp" class="form-text text-muted">Make a short title.</small>
-    </div>
+      <form action='. $_SERVER["REQUEST_URI"].' method="post">
+      <div class="form-group">
+      <label for="exampleInputEmail1">Title</label>
+      <input type="text" required="1" class="form-control" id="title" name="title" aria-describedby="emailHelp">
+      <small id="emailHelp" class="form-text text-muted">Make a short title.</small>
+      </div>
 
-    <div class="form-group">
-    <label for="exampleFormControlTextarea1">describe your problem</label>
-    <textarea class="form-control" required="1" id="desc" name="desc" rows="3"></textarea>
-  </div>
-  <button type="submit" class="btn btn-dark">Submit</button>
-</form>
+      <div class="form-group">
+      <label for="exampleFormControlTextarea1">describe your problem</label>
+      <textarea class="form-control" required="1" id="desc" name="desc" rows="3"></textarea>
+      <input type="hidden" name="id" id="id" value="'. $_SESSION['username'] .'">
+      </div>
+      <button type="submit" class="btn btn-dark">Submit</button>
+      </form>
     
-</div>
+      </div>';
 
-    <div class="container">
+     }
+      else
+
+      {
+       echo '<div class="container">
+        <h1 class="py-2" id="ques">Ask a Question</h1>
+        <p class="lead"> You are not logged in.please login to start your question</p>
+        </div>';
+      }
+
+?>
+
+
+
+    <div class="container mb-5">
 
       <h1 class="py-2" id="ques">Browse Question</h1>
 
     <?php
 
     $id=$_GET['catagory'];
+    //$id = isset($_GET['id']) ? $_GET['id'] : '';
     
     $con=mysqli_connect("localhost","root","","myforum");
     $sql= "SELECT * FROM `threads` WHERE cat_id = '$id'";
@@ -129,12 +164,18 @@
       $desc = $row['description'];
       $id = $row['id'];
       $time = $row['timestamp'];
+      $user = $row['user'];
+      $sql2 = "SELECT username FROM `users` WHERE id='$user'";
+      $result2=mysqli_query($con,$sql2);
+      $row2 =mysqli_fetch_assoc($result2);
+
 
    
 
      echo '<div class="media my-3">
       <img class="mr-3" src="img/user.png" width="54px;" alt="Generic placeholder image">
       <div class="media-body">
+      <P class="font-weight-bold my-0"> Asked by '.$row['user'].' at '.$time.'</p>
       <h5 class="mt-0"><a href="threadlist.php?thread='.$id.'" style="text-decoration:none;color:red;">'.$title.'</a></h5>
        '.$desc.'
      </div>';

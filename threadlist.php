@@ -67,6 +67,7 @@
       $noResult = false;
       $name = $row['title'];
       $dis = $row['description'];
+      $commentby = $row['user'];
 
     }
 
@@ -90,11 +91,16 @@
    $method=$_SERVER['REQUEST_METHOD'];
    if($method=='POST'){
     //INSERT INTO comment DATABASE
-
+    
     $comment=$_POST['comment'];
+    $comment = str_replace("<", "&lt;", $comment);
+    $comment = str_replace(">", "&gt;", $comment);
+    $sno=$_POST['id'];
+    //$comment= str_replace("<","&lt;",$comment);
+    //$comment= str_replace(">","&gt;",$comment);
     //$th_desc=$_POST['desc'];
-
-    $sql= "INSERT INTO `comments` ( `content`, `comment_by`, `thread_id`, `comment_time`) VALUES ( '$comment', '0', '$id', current_timestamp());";
+    //$id1= $_SESSION['username'];
+    $sql= "INSERT INTO `comments`( `content`, `comment_by`, `thread_id`, `comment_time`) VALUES ( '$comment','$sno','$id',current_timestamp());";
     $result=mysqli_query($con,$sql);
     $showAlert=true;
     if($showAlert)
@@ -106,29 +112,6 @@
    }
 
    ?>
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -178,33 +161,45 @@
              Remain respectful of other members at all times.
            </p>
           <p class="lead">
-            <a class="btn btn-primary btn-lg" href="#" role="button">Learn more</a>
+            <a class="btn btn-primary btn-lg" href="#" role="button">Posted by <?php echo $commentby;  ?> </a>
           </p>
       </div>
      
    </div>
 
 
+<?php 
+ if(isset($_SESSION['loggedin']) && $_SESSION['loggedin']== true ){
 
-
-
-   <div class="container">
+  echo' <div class="container">
       
       <h1 class="py-2" id="comment">Post a comment</h1>
 
-<form action="<?php echo $_SERVER['REQUEST_URI']?>" method="post">
+<form action="'. $_SERVER['REQUEST_URI'].'" method="post">
   
-
+  
     <div class="form-group">
     <label for="exampleFormControlTextarea1">Type your comment</label>
     <textarea class="form-control" id="comment" name="comment" rows="3"></textarea>
+    <input type="hidden" name="id" id="id" value="'. $_SESSION['username'] .'">
   </div>
   <button type="submit" class="btn btn-warning">Post comment</button>
 </form>
     
-</div>
+</div>';
+}
 
-  
+else
+
+ {
+       echo '<div class="container">
+        <h1 class="py-2" id="ques">Post e comment</h1>
+        <p class="lead"> You are not logged in.please login to start your question</p>
+        </div>';
+      }
+
+
+  ?>
 
 
 
@@ -227,13 +222,18 @@
       $content = $row['content'];
       $id = $row['id'];
       $time = $row['comment_time'];
+      $comment = $row['comment_by'];
+      //$user = $row['user'];
+      $sql2 = "SELECT username FROM `users` WHERE id='$comment'";
+      $result2=mysqli_query($con,$sql2);
+      $row2 =mysqli_fetch_assoc($result2);
 
    
 
      echo '<div class="media my-3">
       <img class="mr-3" src="img/user.png" width="54px;" alt="Generic placeholder image">
       <div class="media-body">
-      <p class="font-weight-bold my-0">Sadik at '.$time.'</p>
+      <p class="font-weight-bold my-0">'.$row['comment_by'].' at '.$time.'</p>
        '.$content.'
      </div>';
 

@@ -12,14 +12,14 @@
   </head>
   <body>
     
-   
+   <?php
+   include'db_connect.php';
+   ?>
    <?php
    include'header.php';
    ?>
 
-   <?php
-   include'db_connect.php';
-   ?>
+   
 
    <!-- slider -->
    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -63,7 +63,7 @@
    <!-- fetch all categories -->
     <?php
     $con=mysqli_connect("localhost","root","","myforum");
-    $sql= "SELECT * FROM `categories`";
+    $sql= "SELECT * FROM `categories` LIMIT 3";
     $result=mysqli_query($con,$sql);
     while($row=mysqli_fetch_assoc($result))
     {

@@ -5,7 +5,11 @@ session_start();
 
 
 
+<?php
 
+include'db_connect.php'; 
+
+?>
 
 
 <?php
@@ -28,12 +32,21 @@ echo  '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Categories
           </a>
-          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-            <li><a class="dropdown-item" href="#">Action</a></li>
-            <li><a class="dropdown-item" href="#">Another action</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdown">';
+          $con=mysqli_connect("localhost","root","","myforum");
+          $sql = "SELECT name , id FROM `categories` ";
+          $result=mysqli_query($con,$sql);
+    
+          while($row=mysqli_fetch_assoc($result)){
+
+          
+            
+          echo'<a class="dropdown-item" href="threads.php?catagory='.$row['id'].'">'.$row['name'].'</a>';
+            
+           
+          
+        }
+        echo'</div>
         </li>
         <li class="nav-item">
           <a class="nav-link " href="contact.php" tabindex="-1" >Contact</a>
@@ -48,8 +61,8 @@ echo  '<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
 
         echo' 
 
-        <form class="form-inline my-2 my-lg-0">
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <form class="form-inline my-2 my-lg-0" action="find.php" method="get">
+        <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
         <p class="text-light my-0 mx-2">welcome  '.$_SESSION['username'].'</p>
 
@@ -71,12 +84,12 @@ else{
 
        echo' 
 
-       <form class="form-inline my-3 my-lg-0">
+       <form class="form-inline my-3 my-lg-0" action="find.php" method="get">
 
 
 
         
-        <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+        <input class="form-control mr-sm-2" name="search" type="search" placeholder="Search" aria-label="Search">
         <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
 
 

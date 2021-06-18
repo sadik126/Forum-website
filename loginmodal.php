@@ -40,7 +40,8 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
       $login =  true;
       session_start();
       $_SESSION['loggedin']=true;
-       $_SESSION['username']=$username;
+      $_SESSION['id'] = $num['id'];
+      $_SESSION['username']= $username;
       header("location:index.php");
 
       
